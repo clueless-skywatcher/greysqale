@@ -39,3 +39,4 @@ Caveats and Todos:
 - Pool connections have been implemented, but not tested.
 - Implement select rows, update rows
 - Implement Aggregate functions
+- Add more fields and constraints, implement ForeignKey properly
