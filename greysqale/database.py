@@ -49,6 +49,7 @@ class GSQLDatabase:
         return tbls
 
     def add(self, table_cls):
+        table_cls.__db__ = self
         with self.connection as conn:
             with conn.cursor() as c:
                 c.execute(table_cls._create_table_query())

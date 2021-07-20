@@ -13,3 +13,6 @@ class Employee(ModelTable):
 
 db = GSQLDatabase(config('POSTGRES_USERNAME'), config('POSTGRES_PASSWORD'), config('POSTGRES_DBNAME'))
 db.add(Employee)
+
+# print(Employee._insert_table_query(age = 25, name = 'Raju', salary = 30000))
+Employee.insert(age = 24, name = 'Somi', salary = 30000)
