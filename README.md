@@ -34,3 +34,8 @@ db.add(Employee)
 Employee.insert(name = 'Mark', age = 45, salary = 60000) # Creates an employee with default department IT
 Employee.insert(name = 'Sam', age = 39, salary = 40000, department = 'HR')
 ```
+
+Caveats and Todos:
+- Pool connections have been implemented, but not tested.
+- Implement select rows, update rows
+- Implement Aggregate functions
