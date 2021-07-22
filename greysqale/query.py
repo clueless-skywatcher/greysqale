@@ -1,3 +1,4 @@
+from greysqale.errors import GSQLQueryError
 from re import S
 import psycopg2
 
@@ -6,6 +7,7 @@ from .constraints import NotNull, Serial
 
 SQL_CREATE_QUERY = "CREATE TABLE IF NOT EXISTS {}({});"
 SQL_INSERT_QUERY = "INSERT INTO {}({}) VALUES {};"
+SQL_SELECT_QUERY_WITHOUT_FILTER = "SELECT {} FROM {};"
 
 class Query:
     def __init__(self, *args, **kwargs):
@@ -27,6 +29,8 @@ class Query:
 class CreateTable(Query):
     def __init__(self, table_name, fields) -> None:
         super(CreateTable, self).__init__()
+        if any((c in set('; *,.')) for c in table_name):
+            raise GSQLQueryError("Invalid character in table name")
         self.table_name = table_name
         self.fields = fields
         self._build_query()
@@ -40,13 +44,23 @@ class CreateTable(Query):
 class InsertRow(Query):
     def __init__(self, table_name, **kwargs):
         super(InsertRow, self).__init__()
+        if any((c in set('; *,.')) for c in table_name):
+            raise GSQLQueryError("Invalid character in table name")
         self.table_name = table_name
         self.kw = kwargs
 
     def _build_query(self):
         keys = tuple(self.kw.keys())
         values = tuple(self.kw.values())
-        
         s = SQL_INSERT_QUERY.format(self.table_name, ', '.join(keys), values)
         self._query = s
         return s
+
+class SelectWithoutFilter(Query):
+    def __init__(self, table_name, *columns):
+        super(SelectWithoutFilter, self).__init__()
+        self.table_name = table_name
+        self.columns = columns
+
+    def _build_query(self):
+        return SQL_SELECT_QUERY_WITHOUT_FILTER.format(', '.join(self.columns), self.table_name)

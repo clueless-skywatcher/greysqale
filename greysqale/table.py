@@ -2,24 +2,21 @@ from .errors import GSQLQueryError
 import inspect
 
 from .database import GSQLDatabase
-from .query import CreateTable, InsertRow
+from .query import CreateTable, InsertRow, SelectWithoutFilter
 from .fields import IDField
-from greysqale import query
 
 class ModelTable:
     __db__ = None
     def __init__(self, **kwargs):
-        self._fields = {
-            f'{self.__class__._table_name()}Id': None
-        }
+        self._fields = {}
 
         for key, val in kwargs.items():
             self._fields[key] = val
 
     def __getattribute__(self, name: str):
-        _data = object.__getattribute__(self, '_data')
-        if name in _data:
-            return _data[name]
+        _fields = object.__getattribute__(self, '_fields')
+        if name in _fields:
+            return _fields[name]
         return object.__getattribute__(self, name)
 
     @classmethod
@@ -59,4 +56,27 @@ class ModelTable:
             with conn.cursor() as c:
                 c.execute(cls._insert_table_query(**kwargs))
 
-        
+    @classmethod
+    def _select_table_query(cls, *columns):
+        if '*' in columns and len(columns) > 1:
+            raise GSQLQueryError("No point in writing * when providing other columns")
+        s = SelectWithoutFilter(cls._table_name(), *columns)
+        return s._build_query()
+
+    @classmethod
+    def select(cls, *columns):
+        with cls.__db__.connection as conn:
+            with conn.cursor() as c:
+                c.execute(cls._select_table_query(*columns))
+                column_names = [desc[0] for desc in c.description]
+                rows = c.fetchall()
+                final_rows = []
+                for row in rows:
+                    row_val = {}
+                    for c, r in zip(column_names, row):
+                        row_val[c] = r
+                    final_rows.append(cls(**row_val))
+        return final_rows
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self._fields})"

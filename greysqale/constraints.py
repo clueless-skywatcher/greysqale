@@ -23,6 +23,8 @@ class Serial(Constraint):
 class DefaultValue(Constraint):
     def __init__(self, val):
         super(DefaultValue, self).__init__()
+        if isinstance(val, str):
+            val = f"\'{val}\'"
         self.constraint = f'DEFAULT {val}'
 
 class ForeignKey(Constraint):

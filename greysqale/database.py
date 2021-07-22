@@ -27,6 +27,8 @@ class GSQLDatabase:
         self.pool_max = pool_max
         self.pool_min = pool_min
 
+        self.table_classes = []
+
         self.connect()
 
     def connect(self):
@@ -50,6 +52,7 @@ class GSQLDatabase:
 
     def add(self, table_cls):
         table_cls.__db__ = self
+        self.table_classes.append(table_cls)
         with self.connection as conn:
             with conn.cursor() as c:
                 c.execute(table_cls._create_table_query())
