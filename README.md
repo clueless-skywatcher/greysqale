@@ -34,9 +34,29 @@ db.add(Employee)
 Employee.insert(name = 'Mark', age = 45, salary = 60000) # Creates an employee with default department IT
 Employee.insert(name = 'Sam', age = 39, salary = 40000, department = 'HR')
 ```
+- Selecting rows
+```python
+print(Employee.select('*')) # Will select all columns
+```
+Output:
+```python
+Employee({'id': 17, 'age': 24, 'department': 'Accounting', 'name': 'ABC', 'salary': 30000})
+Employee({'id': 18, 'age': 29, 'department': 'IT', 'name': 'DEF', 'salary': 40000})
+Employee({'id': 19, 'age': 19, 'department': 'HR', 'name': 'GHI', 'salary': 0})
+```
+```python
+print(Employee.select('id', 'name')) # Will select only id and name
+```
+Output:
+```python
+Employee({'id': 17, 'name': 'ABC'})
+Employee({'id': 18, 'name': 'DEF'})
+Employee({'id': 19, 'name': 'GHI'})
+```
+
 
 Caveats and Todos:
-- Pool connections have been implemented, but not tested.
-- Implement select rows, update rows
+- Implement select rows with filters
+- Implement update rows
 - Implement Aggregate functions
 - Add more fields and constraints, implement ForeignKey properly
