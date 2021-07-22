@@ -36,7 +36,9 @@ Employee.insert(name = 'Sam', age = 39, salary = 40000, department = 'HR')
 ```
 - Selecting rows
 ```python
-print(Employee.select('*')) # Will select all columns
+s = Employee.select('*')
+for row in s:
+    print(row) # Will select all columns
 ```
 Output:
 ```python
@@ -45,7 +47,9 @@ Employee({'id': 18, 'age': 29, 'department': 'IT', 'name': 'DEF', 'salary': 4000
 Employee({'id': 19, 'age': 19, 'department': 'HR', 'name': 'GHI', 'salary': 0})
 ```
 ```python
-print(Employee.select('id', 'name')) # Will select only id and name
+s = Employee.select('id', 'name') # Will select only id and name
+for row in s:
+    print(row)
 ```
 Output:
 ```python
